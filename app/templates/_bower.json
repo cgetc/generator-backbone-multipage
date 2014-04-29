@@ -1,0 +1,26 @@
+{
+  "name": "generator-backbone-multipage",
+  "version": "0.0.0",
+  "description": "generator for backbone multipage webapp.",
+  "keywords": [
+    "generator",
+    "backbone",
+    "multipage"
+  ],
+  "authors": [
+    "cgetc"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "lodash": "~2.4.1",
+    "zepto": "~1.1.3",
+    "backbone": "~1.1.2"
+  }
+}

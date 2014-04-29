@@ -1,0 +1,56 @@
+{
+  "tmplDir": "<%= srcDir? srcDir + '/' : '' %><%= tmplDir %>",
+  "requirejs": {
+    "baseUrl": "<%= srcDir? srcDir + '/' : '' %><%= jsDir %>",
+    "dir": "js",
+    "paths": {
+      "requirejs": "../../node_modules/requirejs/require",
+      "underscore": "../../bower_components/lodash/dist/lodash",
+      "jquery": "../../bower_components/zepto/zepto",
+      "backbone": "../../bower_components/backbone/backbone"
+    },
+    "shim": {
+      "underscore": {
+        "exports": "_"
+      },
+      "jquery": {
+        "exports": "$"
+      },
+      "backbone": {
+        "dependencies": ["underscore", "jquery"],
+        "exports": "Backbone"
+      }
+    },
+    "urlArgs": ""
+  },
+  "compass": {
+    "cssDir": "<%= cssDir %>",
+    "sassDir": "<%= srcDir? srcDir + '/' : '' %><%= sassDir %>",
+    "javascriptsDir": "js",
+    "sourcemap": true,
+    "outputStyle": "compressed"
+  },
+  "esteWatch": {
+      "enabled": false,
+      "dirs": [
+        "<%= srcDir? srcDir + '/' : '' %><%= tmplDir %>/*",
+        "<%= srcDir? srcDir + '/' : '' %><%= jsDir %>/*",
+        "<%= srcDir? srcDir + '/' : '' %><%= sassDir %>/*"
+      ]
+  },
+  "develop": {
+    "compass": {
+      "httpPath": "http://dev.example.com"
+    }
+  },
+  "build": {
+    "requirejs": {
+      "optimize": "uglify2",
+      "preserveLicenseComments": false,
+      "generateSourceMaps": true
+    },
+    "compass": {
+      "httpPath": "http://img.example.com"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+#todo-list {
+	@clearfix;
+
+	ol,
+	p,
+	form {
+		float: left;
+		margin: 10px;
+	}
+}
