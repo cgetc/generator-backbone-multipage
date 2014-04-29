@@ -53,6 +53,10 @@ Yeoman has a heart of gold. He's a person with feelings and opinions, but he's v
 
 If you'd like to get to know Yeoman better and meet some of his friends, [Grunt](http://gruntjs.com) and [Bower](http://bower.io), check out the complete [Getting Started Guide](https://github.com/yeoman/yeoman/wiki/Getting-Started).
 
+### See Also (In Japanese)
+
+[Multipage版のBackbone Yoman Generatorを公開しました](http://qiita.com/cgetc@github/items/d826eeedf245ae2d6cb0)
+
 ## License
 
 MIT
