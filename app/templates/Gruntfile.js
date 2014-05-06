@@ -19,7 +19,10 @@ module.exports = function(grunt) {
     jst: {
       options: {
         namespace: false,
-        amd: true
+        amd: true,
+        templateSettings: {
+          variable: 'data'
+        }
       }
     },
     compass: {
@@ -29,10 +32,10 @@ module.exports = function(grunt) {
     },
     esteWatch: {
       options: config.esteWatch,
-      html: function (filepath) {
+      ejs: function (filepath) {
         var files = {},
             outTmplDir = jsDir + '/' + tmplDir.split('/')[1];
-        files[filepath.replace(tmplDir, outTmplDir).replace('.html', '.js')] = filepath;
+        files[filepath.replace(tmplDir, outTmplDir).replace('.ejs', '.js')] = filepath;
         grunt.config(['jst', 'compile', 'files'], files);
         return ['jst:compile'];
       },
@@ -56,7 +59,7 @@ module.exports = function(grunt) {
         outTmplDir = jsDir + '/' + tmplDir.split('/')[1] + '/';
     grunt.file.recurse(tmplDir, function (abspath, rootdir, subdir, filename) {
       var dir = subdir? subdir + '/' : '';
-      files[outTmplDir + dir + filename.replace('.html', '.js')] = [tmplDir + '/' + dir + filename];
+      files[outTmplDir + dir + filename.replace('.ejs', '.js')] = [tmplDir + '/' + dir + filename];
     });
     grunt.config(['jst', 'compile', 'files'], files);
     grunt.task.run('jst:compile');
