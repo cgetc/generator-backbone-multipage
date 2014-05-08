@@ -1,5 +1,6 @@
 {
   "tmplDir": "<%= srcDir? srcDir + '/' : '' %><%= tmplDir %>",
+  "outTmplDir": "<%= srcDir? srcDir + '/' : '' %><%= jsDir %>/<%= tmplDir %>",
   "requirejs": {
     "baseUrl": "<%= srcDir? srcDir + '/' : '' %><%= jsDir %>",
     "dir": "js",

@@ -4,7 +4,8 @@ module.exports = function(grunt) {
       config = grunt.file.readJSON('config.json'),
       outJsDir = config.requirejs.dir,
       jsDir = config.requirejs.baseUrl,
-      tmplDir = config.tmplDir;
+      tmplDir = config.tmplDir,
+      outTmplDir = config.outTmplDir;
   
   require('load-grunt-tasks')(grunt);
 
@@ -12,6 +13,9 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     requirejs: {
       options: config.requirejs,
+      develop: {
+        options: config.develop.requirejs
+      },
       build: {
         options: config.build.requirejs
       }
@@ -33,8 +37,7 @@ module.exports = function(grunt) {
     esteWatch: {
       options: config.esteWatch,
       ejs: function (filepath) {
-        var files = {},
-            outTmplDir = jsDir + '/' + tmplDir.split('/')[1];
+        var files = {};
         files[filepath.replace(tmplDir, outTmplDir).replace('.ejs', '.js')] = filepath;
         grunt.config(['jst', 'compile', 'files'], files);
         return ['jst:compile'];
@@ -49,29 +52,27 @@ module.exports = function(grunt) {
     },
     concurrent: {
       develop: ['css:develop', 'tmpl', 'js:develop'],
-      build: ['css:build', 'js:build'],
-      requirejs: ['tmpl', 'prepare:requirejs']
+      build: ['css:build', 'js:build']
     }
   });
 
   grunt.registerTask('tmpl', 'compile jst for development', function () {
-    var files = {},
-        outTmplDir = jsDir + '/' + tmplDir.split('/')[1] + '/';
+    var files = {};
     grunt.file.recurse(tmplDir, function (abspath, rootdir, subdir, filename) {
       var dir = subdir? subdir + '/' : '';
-      files[outTmplDir + dir + filename.replace('.ejs', '.js')] = [tmplDir + '/' + dir + filename];
+      files[outTmplDir + '/' + dir + filename.replace('.ejs', '.js')] = [tmplDir + '/' + dir + filename];
     });
     grunt.config(['jst', 'compile', 'files'], files);
     grunt.task.run('jst:compile');
   });
 
-  grunt.registerTask('js:develop', 'compile js for development', generate_develop_common_js);
+  grunt.registerTask('js:develop', 'compile js for development', generate_develop_require_js);
 
   grunt.registerTask('js:build', 'compile js for build', function () {
-    grunt.task.run('concurrent:requirejs');
+    grunt.task.run('tmpl');
+    generate_build_require_js();
     grunt.config(['requirejs', 'build', 'options', 'modules'], generate_requirejs_build_modules());
     grunt.task.run('requirejs:build');
-    grunt.task.run('rollback:requirejs');
   });
 
   grunt.registerTask('css:develop', 'compile css for development', ['compass:develop']);
@@ -80,14 +81,13 @@ module.exports = function(grunt) {
   grunt.registerTask('build', 'compile js, jst and css for build', ['concurrent:build']);
   grunt.registerTask('default', ['concurrent:develop', 'esteWatch']);
 
-  function generate_develop_common_js () {
-    var _config = _.omit(config.requirejs, ['dir']);
-    _config.baseUrl = '/' + _config.baseUrl;
-    delete _config.paths.requirejs;
-    grunt.file.write(outJsDir + '/common.js', [
+  function generate_develop_require_js () {
+    var options = _.pick(get_requirejs_options('develop'), ['paths', 'shim', 'urlArgs']);
+    options.baseUrl = '/' + jsDir;
+    delete options.paths.requirejs;
+    grunt.file.write(outJsDir + '/require.js', [
         grunt.file.read('./node_modules/requirejs/require.js'),
-        'require.config(' + JSON.stringify(_config) + ');',
-        grunt.file.read(jsDir + '/common.js')
+        'require.config(' + JSON.stringify(options) + ');'
     ].join('\n'));
   }
 
@@ -107,20 +107,17 @@ module.exports = function(grunt) {
     return modules;
   }
 
-  grunt.registerTask('prepare:requirejs', 'generate file for build', function () {
-    grunt.file.copy(jsDir + '/common.js', jsDir + '/common.original.js');
-    var _config = _.omit(config.requirejs, ['paths', 'shim', 'dir']);
-    _config.baseUrl = '/' + _config.baseUrl;
-    grunt.file.write(jsDir + '/common.js', [
-      'require.config(' + JSON.stringify(_config) + ');',
-      grunt.file.read(jsDir + '/common.original.js')
-    ].join('\n'));
-  });
+  function get_requirejs_options(env) {
+    return _.extend(grunt.config(['requirejs', 'options']), grunt.config(['requirejs', env, 'options']));
+  }
 
-  grunt.registerTask('rollback:requirejs', 'rollback file for build', function () {
-    if (grunt.file.exists(jsDir + '/common.original.js')) {
-      grunt.file.copy(jsDir + '/common.original.js', jsDir + '/common.js');
-      grunt.file.delete(jsDir + '/common.original.js');
-    }
-  });
+  function generate_build_require_js () {
+    var options = _.pick(get_requirejs_options('build'), ['urlArgs']);
+    options.baseUrl = '/' + outJsDir;
+    grunt.file.write(jsDir + '/require.js', [
+      grunt.file.read('./node_modules/requirejs/require.js'),
+      'require.config(' + JSON.stringify(options) + ');'
+    ].join('\n'));
+  }
+
 };

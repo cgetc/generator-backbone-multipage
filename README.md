@@ -54,6 +54,9 @@ Yeoman has a heart of gold. He's a person with feelings and opinions, but he's v
 If you'd like to get to know Yeoman better and meet some of his friends, [Grunt](http://gruntjs.com) and [Bower](http://bower.io), check out the complete [Getting Started Guide](https://github.com/yeoman/yeoman/wiki/Getting-Started).
 
 ### Updates
+## 0.0.3
+* Reviced not to include requirejs and use data-main.
+
 ## 0.0.2
 * Reviced template files' extension from .html to .ejs.
 * Add JST options to prepend to use with statement.
